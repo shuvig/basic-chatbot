@@ -14,11 +14,6 @@ from src.data.vectorstore import VectorStoreManager
 from htmlTemplate import css, bot_template, user_template
 
 
-def handle_user_question(question, conversation):
-    response = conversation({"question": question})
-    return response
-
-
 def main():
     load_dotenv()
     st.set_page_config(
@@ -31,8 +26,8 @@ def main():
     st.header("Chat with multiple PDFs :books:")
     user_question = st.text_input("Ask a question")
     if user_question:
-        # ai_answer = ConversationManager.handle_user_question(user_question, st.session_state.conversation)
-        ai_answer = handle_user_question(user_question, st.session_state.conversation)
+        ai_answer = ConversationManager.handle_user_question(user_question, st.session_state.conversation)
+        # ai_answer = handle_user_question(user_question, st.session_state.conversation)
         st.session_state.chat_history = ai_answer['chat_history']
         for i, message in enumerate(st.session_state.chat_history):
             if i % 2 == 0:
