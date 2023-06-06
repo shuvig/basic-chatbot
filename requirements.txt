@@ -5,3 +5,6 @@ streamlit
 pypdf2
 python-dotenv
 faiss-cpu
+InstructorEmbedding
+sentence_transformers
+tiktoken
