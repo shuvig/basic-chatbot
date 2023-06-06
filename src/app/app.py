@@ -13,9 +13,11 @@ from src.chatbot.conversation import ConversationManager
 from src.data.vectorstore import VectorStoreManager
 from htmlTemplate import css, bot_template, user_template
 
+
 def handle_user_question(question, conversation):
     response = conversation({"question": question})
     return response
+
 
 def main():
     load_dotenv()
@@ -31,14 +33,18 @@ def main():
     if user_question:
         # ai_answer = ConversationManager.handle_user_question(user_question, st.session_state.conversation)
         ai_answer = handle_user_question(user_question, st.session_state.conversation)
-        st.write(ai_answer)
-
+        st.session_state.chat_history = ai_answer['chat_history']
+        for i, message in enumerate(st.session_state.chat_history):
+            if i % 2 == 0:
+                st.write(user_template.replace("{{MSG}}", message.content), unsafe_allow_html=True)
+            else:
+                st.write(bot_template.replace("{{MSG}}", message.content), unsafe_allow_html=True)
 
     if "conversation" not in st.session_state:
         st.session_state.conversation = None
 
-    st.write(user_template.replace("{{MSG}}", "Hello AI!"), unsafe_allow_html=True)
-    st.write(bot_template.replace("{{MSG}}", "Hello Human!"), unsafe_allow_html=True)
+    if "chat_history" not in st.session_state:
+        st.session_state.chat_history = None
 
     with st.sidebar:
         st.subheader("Your PDFs")
@@ -49,7 +55,6 @@ def main():
                 chunks = TextManager().get_chunks_from_text(raw_text)
                 vectorstore = VectorStoreManager().get_vectorstore(chunks)
                 st.session_state.conversation = ConversationManager().get_conversation(vectorstore)
-
 
 
 if __name__ == '__main__':
